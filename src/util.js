@@ -1,7 +1,6 @@
 const SSM = require('aws-sdk/clients/ssm');
-const jq = require('node-jq');
 
-const ssm = new SSM();
+const ssm = new SSM({ region: 'us-east-1' });
 
 async function getAllWithToken(method) {
     let results = { Parameters: [] };
@@ -39,17 +38,15 @@ function getRequest(Path, NextToken) {
         .promise();
 }
 
-async function composer(key, config) {
+async function composer(key, filterFn) {
     const preparedFunction = getRequest.bind(this, key);
     return getAllWithToken(preparedFunction)
-        .then((allResults) => applyFilter(allResults, config));
+        .then((allResults) => applyFilter(allResults, filterFn));
 }
 
-async function applyFilter(allResults, config) {
-    const { jqFilter, ...remainingConfig } = config;
-
-    return !!jqFilter ?
-        jq.run(jqFilter, allResults, { input: 'json', ...remainingConfig }) :
+async function applyFilter(allResults, filterFn) {
+    return !!filterFn ?
+        filterFn(allResults) :
         allResults;
 }
 

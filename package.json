@@ -9,8 +9,7 @@
   "author": "Julian Pittas <julian.pittas@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.449.0",
-    "node-jq": "^1.6.0"
+    "aws-sdk": "^2.449.0"
   },
   "devDependencies": {
     "jest": "^24.8.0"

@@ -1,39 +1,26 @@
 const { composer } = require('./src/util');
 
-const generateConfig = (jqFilter = '.', userConfig) => ({
-    output: 'json',
-    jqFilter,
-    ...userConfig
-});
+const filterParametersArray = (rawResults) => rawResults.Parameters.map(({ Value }) => Value);
+const filterFirstParameter = (rawResults) => rawResults.Parameters[0];
 
-function getGlobalRegions(userConfig) {
-    const config = generateConfig('[.Parameters[].Value]', userConfig);
-    return composer(`/aws/service/global-infrastructure/regions`, config);
+function getGlobalRegions(filterFn = filterParametersArray) {
+    return composer(`/aws/service/global-infrastructure/regions`, filterFn);
 }
 
-function getServicesForRegion(region, userConfig) {
-    const config = generateConfig('[.Parameters[].Value]', userConfig);
-    return composer(`/aws/service/global-infrastructure/regions/${region}/services`, config);
+function getServicesForRegion(region, filterFn = filterParametersArray) {
+    return composer(`/aws/service/global-infrastructure/regions/${region}/services`, filterFn);
 }
 
-function getServiceInfo(serviceName, userConfig) {
-    const config = generateConfig('.Parameters[0]', userConfig);
-    return composer(`/aws/service/global-infrastructure/services/${serviceName}`, config);
+function getServiceInfo(serviceName, filterFn = filterFirstParameter) {
+    return composer(`/aws/service/global-infrastructure/services/${serviceName}`, filterFn);
 }
 
-function getServiceRegions(serviceName, userConfig) {
-    const config = generateConfig('[.Parameters[].Value]', userConfig);
-    return composer(`/aws/service/global-infrastructure/services/${serviceName}/regions`, config);
+function getServiceRegions(serviceName, filterFn = filterParametersArray) {
+    return composer(`/aws/service/global-infrastructure/services/${serviceName}/regions`, filterFn);
 }
 
-function getServiceRegionEndpoint(region, serviceName, userConfig) {
-    const config = {
-        ...defaultConfig,
-        jqFilter: '.Parameters',
-        ...userConfig
-    };
-
-    return composer(`/aws/service/global-infrastructure/regions/${region}/services/${serviceName}`, config);
+function getServiceRegionEndpoint(region, serviceName, filterFn = filterParametersArray) {
+    return composer(`/aws/service/global-infrastructure/regions/${region}/services/${serviceName}`, filterFn);
 }
 
 module.exports = {
