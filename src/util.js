@@ -2,7 +2,10 @@ const SSM = require('aws-sdk/clients/ssm');
 
 const ssm = new SSM({ region: 'us-east-1' });
 
-async function getAllWithToken(method) {
+const filterParametersArray = (rawResults) => rawResults.Parameters.map(({ Value }) => Value);
+const filterFirstParameter = (rawResults) => rawResults.Parameters[0];
+
+async function getAllResultsFromPaginatedFn(method) {
     let results = { Parameters: [] };
     let nextToken = null;
 
@@ -22,7 +25,7 @@ async function getAllWithToken(method) {
     return results;
 }
 
-function getRequest(Path, NextToken) {
+function getSSMParameterByPath(Path, NextToken) {
     let params = {
         Path
     };
@@ -38,16 +41,20 @@ function getRequest(Path, NextToken) {
         .promise();
 }
 
-async function composer(key, filterFn) {
-    const preparedFunction = getRequest.bind(this, key);
-    return getAllWithToken(preparedFunction)
-        .then((allResults) => applyFilter(allResults, filterFn));
+function getSSMParameterByPathValuesWithFilter(key, filterFn) {
+    const preparedFunction = getSSMParameterByPath.bind(this, key);
+    return getAllResultsFromPaginatedFn(preparedFunction)
+        .then((allResults) => applyFilterFn(allResults, filterFn));
 }
 
-async function applyFilter(allResults, filterFn) {
+function applyFilterFn(allResults, filterFn) {
     return !!filterFn ?
         filterFn(allResults) :
         allResults;
 }
 
-module.exports = { composer }
+module.exports = {
+    getSSMParameterByPathValuesWithFilter,
+    filterParametersArray,
+    filterFirstParameter
+}
