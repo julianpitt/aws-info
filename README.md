@@ -12,7 +12,7 @@ This package allows you to retrieve information such as:
 Which can be found in the following table: https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/
 
 This package acts as a lightweight wrapper for SSM calls to the AWS global parameters.
-Results from the call can be transformed with [jq](https://stedolan.github.io/jq/) syntax.
+Results from the call can be transformed by passing through a transform function as the last argument
 
 ## Usage
 
@@ -42,12 +42,4 @@ Results from the call can be transformed with [jq](https://stedolan.github.io/jq
         getServicesForRegion,
         getServiceRegionEndpoint
     } from 'aws-info';
-```
-
-### Configuration options
-```js
-{
-    jqFilter: '.', // JQ filter on results: String
-    color: false // Colour output: false|true
-}
 ```
