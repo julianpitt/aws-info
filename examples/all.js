@@ -2,11 +2,11 @@ const {
     getGlobalRegions,
     getServiceRegions,
     getServiceInfo,
-    getServicesByRegion,
+    getServicesForRegion,
     getServiceRegionEndpoint
 } = require('../index.js');
 
-const logJSONObject = (json) => console.log(JSON.stringify(json, null, 2));
+const logJSONObject = (result) => console.log(JSON.stringify(result, null, 2));
 
 (async function main() {
 
@@ -23,11 +23,11 @@ const logJSONObject = (json) => console.log(JSON.stringify(json, null, 2));
     logJSONObject(ec2ServiceInformation);
 
     // List out all the services for a particular region
-    const servicesInSydney = await getServicesByRegion('ap-southeast-2');
+    const servicesInSydney = await getServicesForRegion('ap-southeast-2');
     logJSONObject(servicesInSydney);
 
     // Get the endpoint and protocols for a service in a specific region
-    const ec2EndpointsInUsEast1 = await getServiceRegionEndpoint('us-east-1', 'ec2', { sort: true });
+    const ec2EndpointsInUsEast1 = await getServiceRegionEndpoint('us-east-1', 'ec2');
     logJSONObject(ec2EndpointsInUsEast1);
 
 })()

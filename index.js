@@ -11,7 +11,7 @@ function getGlobalRegions(userConfig) {
     return composer(`/aws/service/global-infrastructure/regions`, config);
 }
 
-function getServicesByRegion(region, userConfig) {
+function getServicesForRegion(region, userConfig) {
     const config = generateConfig('[.Parameters[].Value]', userConfig);
     return composer(`/aws/service/global-infrastructure/regions/${region}/services`, config);
 }
@@ -40,6 +40,6 @@ module.exports = {
     getGlobalRegions,
     getServiceRegions,
     getServiceInfo,
-    getServicesByRegion,
+    getServicesForRegion,
     getServiceRegionEndpoint
 }
